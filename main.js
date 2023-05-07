@@ -22,8 +22,8 @@ const component2 = () => {
 }
 
 const component = () => {
-    const [signal1, setValue] = createSignal(false)
-    const [value2, setValue2] = createSignal('0')
+    const [signal1, setValue] = createSignal('TEST')
+    const [value2, setValue2] = createSignal(false)
 
     createEffect(() => {
 
@@ -52,8 +52,8 @@ const component = () => {
             comp = '60'
         }
 
-        setValue2(!signal1().value)
-        setValue(!signal1().value)
+        setValue2(!value2().value)
+        setValue(event.target.value)
     }
 
     return {
@@ -67,9 +67,22 @@ const component = () => {
         // },
         ...watchSignalFragment(value2(), (value) => {
             if (value) {
+
                 return {
                     [Symbol('div')]: {
-                        children: `TRUE ${value}`
+                        children: {
+                            [Symbol('div')]: {
+                                children: {
+                                    [Symbol('div')]: {
+                                        children:  {
+                                            [Symbol('div')]: {
+                                                children: signal1()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
