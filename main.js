@@ -1,6 +1,5 @@
 import './style.css'
-import { createRoot, createSignal, createEffect } from "./src/js-native-framework";
-import { watchSignal } from "./src/js-native-framework/core.js";
+import { createRoot, createSignal, createEffect, watchSignalChild } from "./src/js-native-framework";
 
 const component3 = (value2) => {
     const [value, setValue] = createSignal('AAAAAAAAAAAAAAAAAAAA')
@@ -21,7 +20,7 @@ const component2 = () => {
 }
 
 const component = () => {
-    const [value, setValue] = createSignal(false)
+    const [value, setValue] = createSignal('999')
     const [value2, setValue2] = createSignal('0')
 
     createEffect(() => {
@@ -66,7 +65,7 @@ const component = () => {
             onClick,
         },
         [Symbol('span')]: {
-            children: watchSignal(value2(), (value) => {
+            children: watchSignalChild(value2(), (value) => {
                 if (value === '0') {
                     return component3()
                 }

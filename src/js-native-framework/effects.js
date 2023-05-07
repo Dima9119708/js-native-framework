@@ -1,23 +1,6 @@
-import { signal } from "./core.js";
-import { createSubject } from "./subject.js";
+import { createSignal } from "./signal/index";
 
-export const createSignal = (initial) => {
-    const $signalSubscriber = createSubject()
-
-    const context = {
-        value: initial,
-        $signalSubscriber,
-    }
-
-    const setValue = (newValue) => {
-        context.value = newValue
-        $signalSubscriber.setState(newValue)
-    }
-
-    return [signal.bind(context), setValue]
-}
-
-export const createEffect = (callback, deps) => {
+const createEffect = (callback, deps) => {
     const values = []
 
     deps.forEach((dep, idx) => {
@@ -32,4 +15,9 @@ export const createEffect = (callback, deps) => {
     })
 
     callback(values)
+}
+
+export {
+    createSignal,
+    createEffect,
 }

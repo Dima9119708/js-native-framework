@@ -1,6 +1,7 @@
 import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "./constant.js";
+import {watchSignalUpdateNode} from "./signal/index.js";
 
-function needUpdateNode(node, value, prevValue) {
+export function updateNode(node, value, prevValue) {
     if (typeof prevValue !== 'object' && typeof value === 'object') {
         node.innerText = ''
         createNodes(value, node)
@@ -12,14 +13,6 @@ function needUpdateNode(node, value, prevValue) {
     }
 }
 
-export function updateNode(node) {
-    let prevValue = this.value
-
-    this.$signalSubscriber.subscribe((currentValue) => {
-        needUpdateNode(node, currentValue, prevValue)
-        prevValue = currentValue
-    })
-}
 
 export function createNodes (comp, dom) {
     const nodes = []
@@ -44,8 +37,7 @@ export function createNodes (comp, dom) {
 
 
         if (element.children?.[$CREATE_SIGNAL]) {
-            domElement.innerText = element.children.value
-            updateNode.call(element.children.context(), domElement)
+            watchSignalUpdateNode.call(element.children.context(), domElement)
         }
 
         if (element.children?.[$WATCH_SIGNAL]) {
@@ -64,38 +56,3 @@ export function createNodes (comp, dom) {
     dom.append(...nodes)
 }
 
-export function signal() {
-    return {
-        [$CREATE_SIGNAL]: true,
-        context: () => this,
-        value: this.value,
-    }
-}
-
-export function watchSignal(signal, fn) {
-    let prevValue = signal.value
-    const context = signal.context()
-
-    const watch = (node) => {
-        context.$signalSubscriber.subscribe((currentValue) => {
-            const actualValue = fn(currentValue)
-
-            needUpdateNode(node, actualValue, prevValue)
-
-            prevValue = actualValue
-        })
-    }
-
-    const init = (node) => {
-        watch(node)
-
-        const initialValue = fn(prevValue)
-
-        needUpdateNode(node, initialValue, prevValue)
-    }
-
-    return {
-        [$WATCH_SIGNAL]: true,
-        init,
-    }
-}
