@@ -1,16 +1,13 @@
 import './style.css'
 import { createRoot, createSignal, createEffect } from "./src/js-native-framework";
+import { watchSignal } from "./src/js-native-framework/core.js";
 
 const component3 = (value2) => {
     const [value, setValue] = createSignal('AAAAAAAAAAAAAAAAAAAA')
 
     return {
         [Symbol('div')]: {
-            children: 'Component3'
-        },
-        [Symbol('div')]: {
-            children: value(),
-            onClick: () => setValue('BBBBBBBBBBBBBBBBBBBBBBB')
+            children: 'УРАААААААААААААААААААААААААААААААААААА'
         },
     }
 }
@@ -25,20 +22,36 @@ const component2 = () => {
 
 const component = () => {
     const [value, setValue] = createSignal(false)
-    const [value2, setValue2] = createSignal('initial')
+    const [value2, setValue2] = createSignal('0')
 
     createEffect(() => {
 
     }, [value2()])
 
     const onClick = () => {
-        setValue2('12345678'.split("").reverse().join(""))
+
     }
 
     const onChange = (event) => {
         setValue(event.target.value)
 
-        const comp = event.target.value.length > 15 ? component3() : event.target.value
+        let comp = '0'
+
+        if (!event.target.value.length) {
+            comp = '0'
+        }
+
+        if (event.target.value.length > 2) {
+            comp = '1'
+        }
+
+        if (event.target.value.length > 8) {
+            comp = '8'
+        }
+
+        if (event.target.value.length > 9) {
+            comp = '60'
+        }
 
         setValue2(comp)
     }
@@ -53,9 +66,17 @@ const component = () => {
             onClick,
         },
         [Symbol('span')]: {
-            children:  value2()
+            children: watchSignal(value2(), (value) => {
+                if (value === '0') {
+                    return component3()
+                }
+
+                return value
+            })
         },
-        // ...component3(),
+        [Symbol('span')]: {
+            children: ''
+        },
         [Symbol('div')]: {
            children: {
                [Symbol('label')]: {

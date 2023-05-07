@@ -1,40 +1,23 @@
-import {$CREATE_SIGNAL} from "./constant.js";
+import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "./constant.js";
 
-export const createSubject = () => {
-    const state = new Set();
+function needUpdateNode(node, value, prevValue) {
+    if (typeof prevValue !== 'object' && typeof value === 'object') {
+        node.innerText = ''
+        createNodes(value, node)
+    }
 
-    const setState = (...args) => {
-        state.forEach(fn => {
-            fn(...args)
-        })
-    };
-
-    const subscribe = (fn) => {
-        state.add(fn);
-    };
-
-    const clear = () => {
-        state.clear();
-    };
-
-    const api = { setState, subscribe, clear };
-
-    return api;
-};
+    if (typeof value === 'string' && value !== prevValue) {
+        node.innerText = ''
+        node.innerText = value
+    }
+}
 
 export function updateNode(node) {
-    let scopeValue = this.value
+    let prevValue = this.value
 
     this.$signalSubscriber.subscribe((currentValue) => {
-        if (typeof scopeValue !== 'object' && typeof currentValue === 'object') {
-            createNodes(currentValue, node)
-        }
-
-        if (typeof currentValue === 'string' && currentValue !== scopeValue) {
-            node.innerText = currentValue
-        }
-
-        scopeValue = currentValue
+        needUpdateNode(node, currentValue, prevValue)
+        prevValue = currentValue
     })
 }
 
@@ -65,9 +48,13 @@ export function createNodes (comp, dom) {
             updateNode.call(element.children.context(), domElement)
         }
 
+        if (element.children?.[$WATCH_SIGNAL]) {
+            element.children.init(domElement)
+        }
+
         if (typeof element.children === 'string') {
             domElement.innerText = element.children
-        } else if (element.children && !element.children?.[$CREATE_SIGNAL]) {
+        } else if (element.children && !element.children?.[$CREATE_SIGNAL] && !element.children?.[$WATCH_SIGNAL]) {
             createNodes(element.children, domElement)
         }
 
@@ -77,10 +64,38 @@ export function createNodes (comp, dom) {
     dom.append(...nodes)
 }
 
-export function signalImpl() {
+export function signal() {
     return {
         [$CREATE_SIGNAL]: true,
         context: () => this,
         value: this.value,
+    }
+}
+
+export function watchSignal(signal, fn) {
+    let prevValue = signal.value
+    const context = signal.context()
+
+    const watch = (node) => {
+        context.$signalSubscriber.subscribe((currentValue) => {
+            const actualValue = fn(currentValue)
+
+            needUpdateNode(node, actualValue, prevValue)
+
+            prevValue = actualValue
+        })
+    }
+
+    const init = (node) => {
+        watch(node)
+
+        const initialValue = fn(prevValue)
+
+        needUpdateNode(node, initialValue, prevValue)
+    }
+
+    return {
+        [$WATCH_SIGNAL]: true,
+        init,
     }
 }

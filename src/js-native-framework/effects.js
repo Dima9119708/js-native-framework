@@ -1,4 +1,5 @@
-import { createSubject, signalImpl } from "./core.js";
+import { signal } from "./core.js";
+import { createSubject } from "./subject.js";
 
 export const createSignal = (initial) => {
     const $signalSubscriber = createSubject()
@@ -13,7 +14,7 @@ export const createSignal = (initial) => {
         $signalSubscriber.setState(newValue)
     }
 
-    return [signalImpl.bind(context), setValue]
+    return [signal.bind(context), setValue]
 }
 
 export const createEffect = (callback, deps) => {
