@@ -1,12 +1,14 @@
 import './style.css'
 import { createRoot, createSignal, createEffect, watchSignalChild } from "./src/js-native-framework";
+import {watchSignalFragment} from "./src/js-native-framework/signal/index.js";
 
 const component3 = (value2) => {
     const [value, setValue] = createSignal('AAAAAAAAAAAAAAAAAAAA')
 
     return {
         [Symbol('div')]: {
-            children: 'УРАААААААААААААААААААААААААААААААААААА'
+            children: 'УРАААААААААААААААААААААААААААААААААААА',
+            onClick: () => setValue('8')
         },
     }
 }
@@ -20,7 +22,7 @@ const component2 = () => {
 }
 
 const component = () => {
-    const [value, setValue] = createSignal('999')
+    const [signal1, setValue] = createSignal(false)
     const [value2, setValue2] = createSignal('0')
 
     createEffect(() => {
@@ -32,8 +34,6 @@ const component = () => {
     }
 
     const onChange = (event) => {
-        setValue(event.target.value)
-
         let comp = '0'
 
         if (!event.target.value.length) {
@@ -52,35 +52,74 @@ const component = () => {
             comp = '60'
         }
 
-        setValue2(comp)
+        setValue2(!signal1().value)
+        setValue(!signal1().value)
     }
 
     return {
-        [Symbol('div')]: {
-            children: value(),
-            onClick,
-        },
-        [Symbol('div')]: {
-            children: value(),
-            onClick,
-        },
-        [Symbol('span')]: {
-            children: watchSignalChild(value2(), (value) => {
-                if (value === '0') {
-                    return component3()
+        // [Symbol('div')]: {
+        //     children: signal1(),
+        //     onClick,
+        // },
+        // [Symbol('div')]: {
+        //     children: signal1(),
+        //     onClick,
+        // },
+        ...watchSignalFragment(value2(), (value) => {
+            if (value) {
+                return {
+                    [Symbol('div')]: {
+                        children: `TRUE ${value}`
+                    }
                 }
+            }
 
-                return value
+            return ({
+                [Symbol('div')]: {
+                    children: {
+                        [Symbol('div')]: {
+                            children: {
+                                [Symbol('div')]: {
+                                    children: {
+                                        [Symbol('div')]: {
+                                            children: {
+                                                [Symbol('div')]: {
+                                                    children: {
+                                                        [Symbol('div')]: {
+                                                            children: {
+                                                                [Symbol('div')]: {
+                                                                    children: {
+                                                                        [Symbol('div')]: {
+                                                                            children: 'FALSE'
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             })
-        },
-        [Symbol('span')]: {
-            children: ''
-        },
+        }),
+        // [Symbol('span')]: {
+        //     children: {
+        //         [Symbol('span')]: {
+        //             children: '8000'
+        //         }
+        //     }
+        // },
         [Symbol('div')]: {
            children: {
-               [Symbol('label')]: {
-                   children: '80'
-               },
+               // [Symbol('label')]: {
+               //     children: '80'
+               // },
                [Symbol('input')]: {
                    onChange,
                    onClick,

@@ -1,6 +1,7 @@
 import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "../constant.js";
 import { createSubject } from "../subject.js";
-import { updateNode } from "../core.js";
+import { createNodes, updateNode} from "../core.js";
+import {createRoot} from "../index.js";
 
 export function signal() {
     return {
@@ -63,5 +64,33 @@ export function watchSignalChild(signal, fn) {
     return {
         [$WATCH_SIGNAL]: true,
         init,
+    }
+}
+
+export const watchSignalFragment = (signal, fn) => {
+    let value = signal.value
+    const context = signal.context()
+
+    const watch = (parent, idx) => {
+        context.$signalSubscriber.subscribe((currentValue) => {
+
+            const symbolNode = fn(currentValue)
+
+            const newNode = createNodes(symbolNode, document.createDocumentFragment())
+
+            parent.replaceChild(newNode, parent.children[idx])
+        })
+    }
+
+    const init = (parent, idx) => {
+        const symbolNode = fn(value)
+
+        createNodes(symbolNode, parent)
+
+        watch(parent, idx)
+    }
+
+    return {
+        [Symbol('Fragment')]: init
     }
 }
