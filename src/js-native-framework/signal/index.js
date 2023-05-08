@@ -1,32 +1,5 @@
-import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "../constant.js";
-import { createSubject } from "../subject.js";
+import { $WATCH_SIGNAL } from "../constant.js";
 import { createNodes, updateNode} from "../core.js";
-import {createRoot} from "../index.js";
-
-export function signal() {
-    return {
-        [$CREATE_SIGNAL]: true,
-        context: () => this,
-        value: this.value,
-    }
-}
-
-export const createSignal = (initial) => {
-    const $signalSubscriber = createSubject()
-
-    const context = {
-        value: initial,
-        $signalSubscriber,
-    }
-
-    const setValue = (newValue) => {
-        context.value = newValue
-        $signalSubscriber.setState(newValue)
-    }
-
-    return [signal.bind(context), setValue]
-}
-
 
 export function watchSignalUpdateNode(node) {
     let prevValue = this.value

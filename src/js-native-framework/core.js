@@ -39,19 +39,20 @@ export function createNodes(comp, dom) {
         }
 
 
-        if (element.children?.[$CREATE_SIGNAL]) {
-            watchSignalUpdateNode.call(element.children.context(), domElement)
-        }
+        // if (element.children?.[$CREATE_SIGNAL]) {
+        //     watchSignalUpdateNode.call(element.children.context(), domElement)
+        // }
+        //
+        // if (element.children?.[$WATCH_SIGNAL]) {
+        //     element.children.init(domElement)
+        // }
 
-        if (element.children?.[$WATCH_SIGNAL]) {
-            element.children.init(domElement)
-        }
 
-        if (typeof element.children === 'string') {
-            domElement.innerText = element.children
-        } else if (element.children && !element.children?.[$CREATE_SIGNAL] && !element.children?.[$WATCH_SIGNAL]) {
-            createNodes(element.children, domElement)
-        }
+        // if (typeof element.children === 'string') {
+        //     domElement.innerText = element.children
+        // } else if (element.children && !element.children?.[$CREATE_SIGNAL] && !element.children?.[$WATCH_SIGNAL]) {
+        //     createNodes(element.children, domElement)
+        // }
 
         nodes.push(domElement)
     }

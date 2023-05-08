@@ -1,20 +1,53 @@
-import { createSignal } from "./signal/index";
+import { $CREATE_SIGNAL } from "./constant";
+import { createSubject } from "./subject";
 
-const createEffect = (callback, deps) => {
-    const values = []
+let Listener;
 
-    deps.forEach((dep, idx) => {
-        const context = dep.context()
+function readSignal() {
+    if (Listener) {
+        if (!this.observers) {
+            this.observers = [Listener]
+        } else {
+            const updated = this.observers.filter(observer => observer.updatedAt > 0)
 
-        values.push(context.value)
+            if (!updated.length) {
+                this.observers.push(Listener)
+            }
+        }
+    }
 
-        context.$signalSubscriber.subscribe((newValue) => {
-            values[idx] = newValue
-            callback(values)
+    return this.value
+}
+
+const createSignal = (initial) => {
+    const $signalSubscriber = createSubject()
+
+    const context = {
+        value: initial,
+        $signalSubscriber,
+        observers: null,
+    }
+
+    const setValue = (newValue) => {
+        context.value = newValue
+
+        context.observers?.forEach(observer => {
+            observer.updatedAt += 1
+            observer.fn()
         })
-    })
 
-    callback(values)
+        $signalSubscriber.setState(newValue)
+    }
+
+    return [readSignal.bind(context), setValue]
+}
+
+const createEffect = (fn) => {
+    Listener = {
+        fn,
+        updatedAt: 0
+    }
+    fn()
 }
 
 export {
