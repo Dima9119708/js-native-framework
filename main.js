@@ -26,6 +26,7 @@ let count1 = 0
 let count2 = 0
 let count3 = 0
 let count4 = 0
+let count5 = 0
 
 const component = () => {
     const [signal1, setValue] = createSignal('signal1')
@@ -34,25 +35,30 @@ const component = () => {
     createEffect(() => {
         count1++
         signal1();
-        console.log('count1', count1)
+        console.log('COUNT_1', count1)
     })
 
     createEffect(() => {
         count2++
         signal1();
-        console.log('count2', count2)
+        console.log('COUNT_2', count2)
     })
 
     createEffect(() => {
         count3++
         signal1()
-        console.log('count3', count3)
+        console.log('COUNT_3', count3)
     })
 
     createEffect(() => {
         count4++
         signal1()
-        console.log('count4', count4)
+        console.log('COUNT_4', count4)
+    })
+
+    createEffect(() => {
+        count5++
+        console.log('count ---------------- 5', count5)
     })
 
     const onClick = () => {}
@@ -60,25 +66,29 @@ const component = () => {
 
     setTimeout(() => {
         setValue('START')
-    }, 500)
-
-    // setTimeout(() => {
-    //     setValue2('PENDING')
-    // }, 1000)
-
+    }, 800)
+    //
+    // // setTimeout(() => {
+    // //     setValue2('PENDING')
+    // // }, 1000)
+    //
     setTimeout(() => {
         setValue('FINISH')
     }, 2000)
-
-
-    setTimeout(() => {
-        setValue('FINISH sacsac')
-    }, 2500)
+    //
+    //
+    // setTimeout(() => {
+    //     setValue('FINISH sacsac')
+    // }, 2500)
 
 
     return {
         [Symbol('div')]: {
-            children: '',
+            children:  signal1(),
+            onClick,
+        },
+        [Symbol('div')]: {
+            children:  signal1(),
             onClick,
         },
         // [Symbol('div')]: {

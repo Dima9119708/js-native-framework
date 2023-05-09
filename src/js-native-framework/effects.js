@@ -8,11 +8,7 @@ function readSignal() {
         if (!this.observers) {
             this.observers = [Listener]
         } else {
-            const updated = this.observers.filter(observer => observer.updatedAt > 0)
-
-            if (!updated.length) {
-                this.observers.push(Listener)
-            }
+            this.observers.push(Listener)
         }
     }
 
@@ -32,8 +28,7 @@ const createSignal = (initial) => {
         context.value = newValue
 
         context.observers?.forEach(observer => {
-            observer.updatedAt += 1
-            observer.fn()
+            observer()
         })
 
         $signalSubscriber.setState(newValue)
@@ -43,11 +38,11 @@ const createSignal = (initial) => {
 }
 
 const createEffect = (fn) => {
-    Listener = {
-        fn,
-        updatedAt: 0
-    }
+    Listener = fn
+
     fn()
+
+    Listener = undefined
 }
 
 export {
