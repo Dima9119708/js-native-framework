@@ -1,20 +1,6 @@
-import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "./constant.js";
-import {watchSignalUpdateNode} from "./signal/index.js";
 import {createEffect} from "./effects.js";
-import {isFunction, isObject, isPlainObject, isPrimitive, isString} from "./utils/base.js";
+import {isFunction, isPlainObject, isPrimitive, isString} from "./utils/base.js";
 
-export function updateNode(node, value, prevValue) {
-    if (typeof prevValue !== 'object' && typeof value === 'object') {
-        node.innerText = ''
-        createNodes(value, node)
-    }
-
-    if (typeof value === 'string' && value !== prevValue) {
-        node.innerText = ''
-        node.innerText = value
-    }
-}
-console.log('isPrimitive', isPrimitive({}))
 export function createNodes(comp, dom) {
     const nodes = []
 

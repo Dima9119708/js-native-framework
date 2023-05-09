@@ -1,4 +1,3 @@
-import { $CREATE_SIGNAL } from "./constant";
 import { createSubject } from "./subject";
 
 let Listener;

@@ -1,106 +1,95 @@
 import './style.css'
-import { createRoot, watchSignalChild } from "./src/js-native-framework";
+import { createRoot }from "./src/js-native-framework";
 import { createEffect, createSignal } from "./src/js-native-framework";
-import {watchSignalFragment} from "./src/js-native-framework/signal";
-
-const component3 = (value2) => {
-    const [value, setValue] = createSignal('AAAAAAAAAAAAAAAAAAAA')
-
-    return {
-        [Symbol('div')]: {
-            children: 'УРАААААААААААААААААААААААААААААААААААА',
-            onClick: () => setValue('8')
-        },
-    }
-}
-
-const component2 = () => {
-    return {
-        [Symbol('div')]: {
-            children: 'Component2'
-        },
-    }
-}
 
 let count1 = 0
 let count2 = 0
 let count3 = 0
-let count4 = 0
-let count5 = 0
 
 const component = () => {
-    const [signal1, setValue] = createSignal(true)
-    const [value2, setValue2] = createSignal(true)
+    const [signal1, setSignal] = createSignal(count1)
+    const [signal2, setSignal2] = createSignal(count2)
+    const [signal3, setSignal3] = createSignal(count3)
 
-    // createEffect(() => {
-    //     count1++
-    //     signal1();
-    // })
-    //
-    // createEffect(() => {
-    //     count2++
-    //     signal1();
-    // })
+    createEffect(() => {
+        console.table({
+            createEffect: 'createEffect',
+            signal3: signal3(),
+        });
+    })
 
-    // setTimeout(() => {
-    //     setValue(!signal1())
-    // }, 2000)
+    setInterval(() => {
+        count1++
+        setSignal(count1)
+    }, 1000)
 
-    // setTimeout(() => {
-    //     setValue(!signal1())
-    // }, 2000)
-    //
-    // setTimeout(() => {
-    //     setValue(!signal1())
-    // }, 4000)
-    //
-    setTimeout(() => {
-        setValue2(!value2())
-    }, 2000)
-    //
-    // setTimeout(() => {
-    //     setValue2(!value2())
-    // }, 7000)
+    setInterval(() => {
+        count2++
+        setSignal2(count2)
+    }, 500)
 
-    const onClick = () => {}
-    const onChange = (event) => {}
+    setInterval(() => {
+        count3++
+        setSignal3(count3)
+    }, 1500)
 
     return [
         {
             [Symbol('div')]: {
-                children: 'signal1()',
-                onClick,
+                children: 'Welcome signal native JS',
             },
         },
-        () => value2() ? 8000 : 9000,
-        // {
-        //     [Symbol('div')]: {
-        //         children: () => signal1()
-        //             ? ({
-        //                 [Symbol('div')] : {
-        //                     children: ({
-        //                         [Symbol('span')] : {
-        //                             children: {
-        //                                 [Symbol('span')]: {
-        //                                     children: () => ({
-        //                                         [Symbol('div')] : {
-        //                                             children: 1000
-        //                                         }
-        //                                     })
-        //                                 },
-        //                                 [Symbol('div')]: {
-        //                                     children: 80
-        //                                 },
-        //                             }
-        //                         }
-        //                     })
-        //                 }
-        //             })
-        //             : 90,
-        //         onClick,
-        //     },
-        // }
-
+        () => signal2(),
+        {
+            [Symbol('div')]: {
+                children: {
+                    [Symbol('div')]: {
+                        children: {
+                            [Symbol('div')]: {
+                                children: {
+                                    [Symbol('div')]: {
+                                        children: {
+                                            [Symbol('div')]: {
+                                                children: {
+                                                    [Symbol('div')]: {
+                                                        children: {
+                                                            [Symbol('div')]: {
+                                                                children: {
+                                                                    [Symbol('div')]: {
+                                                                        children: () => signal1()
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+        },
+        () => ({
+            [Symbol('div')]: {
+                children: {
+                    [Symbol('div')]: {
+                        children:  {
+                            [Symbol('div')]: {
+                                children: {
+                                    [Symbol('div')]: {
+                                        children: () => signal3()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+        })
     ]
 }
 
