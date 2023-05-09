@@ -29,214 +29,81 @@ let count4 = 0
 let count5 = 0
 
 const component = () => {
-    const [signal1, setValue] = createSignal('signal1')
-    const [value2, setValue2] = createSignal(false)
+    const [signal1, setValue] = createSignal(true)
+    const [value2, setValue2] = createSignal(true)
 
-    createEffect(() => {
-        count1++
-        signal1();
-        console.log('COUNT_1', count1)
-    })
+    // createEffect(() => {
+    //     count1++
+    //     signal1();
+    // })
+    //
+    // createEffect(() => {
+    //     count2++
+    //     signal1();
+    // })
 
-    createEffect(() => {
-        count2++
-        signal1();
-        console.log('COUNT_2', count2)
-    })
+    // setTimeout(() => {
+    //     setValue(!signal1())
+    // }, 2000)
 
-    createEffect(() => {
-        count3++
-        signal1()
-        console.log('COUNT_3', count3)
-    })
-
-    createEffect(() => {
-        count4++
-        signal1()
-        console.log('COUNT_4', count4)
-    })
-
-    createEffect(() => {
-        count5++
-        console.log('count ---------------- 5', count5)
-    })
+    // setTimeout(() => {
+    //     setValue(!signal1())
+    // }, 2000)
+    //
+    // setTimeout(() => {
+    //     setValue(!signal1())
+    // }, 4000)
+    //
+    setTimeout(() => {
+        setValue2(!value2())
+    }, 2000)
+    //
+    // setTimeout(() => {
+    //     setValue2(!value2())
+    // }, 7000)
 
     const onClick = () => {}
     const onChange = (event) => {}
 
-    setTimeout(() => {
-        setValue('START')
-    }, 800)
-    //
-    // // setTimeout(() => {
-    // //     setValue2('PENDING')
-    // // }, 1000)
-    //
-    setTimeout(() => {
-        setValue('FINISH')
-    }, 2000)
-    //
-    //
-    // setTimeout(() => {
-    //     setValue('FINISH sacsac')
-    // }, 2500)
-
-
-    return {
-        [Symbol('div')]: {
-            children:  signal1(),
-            onClick,
+    return [
+        {
+            [Symbol('div')]: {
+                children: 'signal1()',
+                onClick,
+            },
         },
-        [Symbol('div')]: {
-            children:  signal1(),
-            onClick,
-        },
-        // [Symbol('div')]: {
-        //     children: signal1(),
-        //     onClick,
-        // },
-        // ...watchSignalFragment(value2(), (value) => {
-        //     if (value) {
-        //
-        //         return {
-        //             [Symbol('div')]: {
-        //                 children: {
-        //                     [Symbol('div')]: {
-        //                         children: {
-        //                             [Symbol('div')]: {
-        //                                 children:  {
-        //                                     [Symbol('div')]: {
-        //                                         children: signal1()
-        //                                     }
-        //                                 }
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //
-        //     return ({
-        //         [Symbol('div')]: {
-        //             children: {
-        //                 [Symbol('div')]: {
-        //                     children: {
-        //                         [Symbol('div')]: {
+        () => value2() ? 8000 : 9000,
+        // {
+        //     [Symbol('div')]: {
+        //         children: () => signal1()
+        //             ? ({
+        //                 [Symbol('div')] : {
+        //                     children: ({
+        //                         [Symbol('span')] : {
         //                             children: {
-        //                                 [Symbol('div')]: {
-        //                                     children: {
-        //                                         [Symbol('div')]: {
-        //                                             children: {
-        //                                                 [Symbol('div')]: {
-        //                                                     children: {
-        //                                                         [Symbol('div')]: {
-        //                                                             children: {
-        //                                                                 [Symbol('div')]: {
-        //                                                                     children: 'FALSE'
-        //                                                                 }
-        //                                                             }
-        //                                                         }
-        //                                                     }
-        //                                                 }
-        //                                             }
+        //                                 [Symbol('span')]: {
+        //                                     children: () => ({
+        //                                         [Symbol('div')] : {
+        //                                             children: 1000
         //                                         }
-        //                                     }
-        //                                 }
+        //                                     })
+        //                                 },
+        //                                 [Symbol('div')]: {
+        //                                     children: 80
+        //                                 },
         //                             }
         //                         }
-        //                     }
+        //                     })
         //                 }
-        //             }
-        //         }
-        //     })
-        // }),
-        // [Symbol('span')]: {
-        //     children: {
-        //         [Symbol('span')]: {
-        //             children: '8000'
-        //         }
-        //     }
-        // },
-        // [Symbol('div')]: {
-        //    children: {
-        //        // [Symbol('label')]: {
-        //        //     children: '80'
-        //        // },
-        //        [Symbol('input')]: {
-        //            onChange,
-        //            onClick,
-        //        },
-        //    }
-        // },
-    }
+        //             })
+        //             : 90,
+        //         onClick,
+        //     },
+        // }
+
+    ]
 }
 
 const app = document.querySelector('#app')
 
 createRoot(component(), app)
-
-// let Listener;
-//
-// function readSignal() {
-//
-//     if (Listener) {
-//
-//         if (!this.observers) {
-//             this.observers = []
-//         }
-//
-//         if (Array.isArray(this.observers)) {
-//             this.observers.push(Listener)
-//         }
-//     }
-//
-//     return this.value
-// }
-//
-// function _createSignal(init) {
-//
-//     const content = {
-//         value: init,
-//         observers: null
-//     }
-//
-//     const setter = (value) => {
-//         content.value = value
-//
-//         content.observers.forEach((observer) => {
-//             observer.fn()
-//         })
-//     }
-//
-//     return [readSignal.bind(content), setter]
-// }
-//
-// const [_value, _setValue] = _createSignal(false)
-// const [_value2, _setValue2] = _createSignal([])
-//
-// function _createEffect(fn) {
-//     const content = {
-//         fn
-//     }
-//
-//     Listener = content
-//
-//     content.fn()
-// }
-//
-// _createEffect(() => {
-//     console.log(_value());
-// })
-//
-// _createEffect(() => {
-//     console.log(_value2());
-// })
-//
-// setTimeout(() => {
-//     _setValue(5)
-// }, 1500)
-//
-// setTimeout(() => {
-//     _setValue2(['asd', '984848'])
-// }, 1500)

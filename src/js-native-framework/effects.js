@@ -28,7 +28,7 @@ const createSignal = (initial) => {
         context.value = newValue
 
         context.observers?.forEach(observer => {
-            observer()
+            observer({ type: 'change' })
         })
 
         $signalSubscriber.setState(newValue)
@@ -40,7 +40,7 @@ const createSignal = (initial) => {
 const createEffect = (fn) => {
     Listener = fn
 
-    fn()
+    fn({ type: 'mount' })
 
     Listener = undefined
 }

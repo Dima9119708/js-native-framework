@@ -1,5 +1,7 @@
 import {$CREATE_SIGNAL, $WATCH_SIGNAL} from "./constant.js";
 import {watchSignalUpdateNode} from "./signal/index.js";
+import {createEffect} from "./effects.js";
+import {isFunction, isObject, isPlainObject, isPrimitive, isString} from "./utils/base.js";
 
 export function updateNode(node, value, prevValue) {
     if (typeof prevValue !== 'object' && typeof value === 'object') {
@@ -12,47 +14,77 @@ export function updateNode(node, value, prevValue) {
         node.innerText = value
     }
 }
-
+console.log('isPrimitive', isPrimitive({}))
 export function createNodes(comp, dom) {
     const nodes = []
 
-    for (const [idx, symbol] of Object.entries(Object.getOwnPropertySymbols(comp)) ) {
+    if (Array.isArray(comp)) {
+        const structuredObject = comp.reduce((acc, element) => {
+            const children = isFunction(element)
+                ? { [Symbol('Fragment')]: { children: element }  }
+                : element
+
+
+            Object.assign(acc, children)
+
+            return acc
+        }, {})
+
+        createNodes(structuredObject, dom)
+
+        return
+    }
+
+    for (const [idx, symbol] of Object.entries(Object.getOwnPropertySymbols(comp))) {
         const element = comp[symbol]
 
-        const domElement = document.createElement(symbol.description)
+        const children = isFunction(element.children)
+            ? element.children()
+            : element.children
 
-        if (typeof element === 'function') {
-            element(dom, idx)
-            continue
+        const domElement = symbol.description === 'Fragment'
+            ? document.createDocumentFragment()
+            : document.createElement(symbol.description)
+
+        if (isFunction(element.children)) {
+            createEffect((info) => {
+                const value = element.children()
+
+                if (info.type === 'mount') return
+
+                if (typeof value === 'object') {
+                    const newNode = createNodes(value, document.createDocumentFragment())
+                    dom.replaceChild(newNode, dom.childNodes[idx])
+                } else {
+                    domElement.replaceChildren(value)
+                    dom.replaceChild(domElement, dom.childNodes[idx])
+                }
+            })
         }
 
-        if (typeof element.onClick === 'function') {
+        if (isFunction(element.onClick)) {
             domElement.addEventListener('click', element.onClick)
         }
 
-        if (typeof element.onChange === 'function') {
+        if (isFunction(element.onChange)) {
             domElement.addEventListener('input', element.onChange)
         }
 
-        if (typeof element.className === 'string') {
+        if (isString(element.className)) {
             domElement.className = element.className
         }
 
+        if (isPrimitive(children)) {
+            if (!domElement.innerText) {
+                domElement.append(children)
+            } else {
+                domElement.innerText = children
+            }
+        }
 
-        // if (element.children?.[$CREATE_SIGNAL]) {
-        //     watchSignalUpdateNode.call(element.children.context(), domElement)
-        // }
-        //
-        // if (element.children?.[$WATCH_SIGNAL]) {
-        //     element.children.init(domElement)
-        // }
-
-
-        // if (typeof element.children === 'string') {
-        //     domElement.innerText = element.children
-        // } else if (element.children && !element.children?.[$CREATE_SIGNAL] && !element.children?.[$WATCH_SIGNAL]) {
-        //     createNodes(element.children, domElement)
-        // }
+        if (isPlainObject(children)) {
+            createNodes(children, domElement)
+        }
 
         nodes.push(domElement)
     }
