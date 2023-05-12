@@ -2,6 +2,8 @@ export const isFunction = (value) => typeof value === 'function'
 
 export const isString = (value) => typeof value === 'string'
 
+export const isUndefined = (value) => value === undefined;
+
 export const isNullOrUndefined = (value) => value === null || value === undefined;
 
 export const isObjectType = (value) => typeof value === 'object';

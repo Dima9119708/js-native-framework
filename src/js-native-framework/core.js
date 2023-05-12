@@ -1,5 +1,34 @@
 import {createEffect} from "./effects.js";
-import {isFunction, isPlainObject, isPrimitive, isString} from "./utils/base.js";
+import { isFunction, isObject, isPlainObject, isPrimitive, isString, isUndefined } from "./utils/base.js";
+
+function isPropsEvent(prop, dom) {
+    const regex = /^(?=.*on)[A-Z]/i;
+    const lowerCaseProp = prop.toLowerCase()
+
+    if (!isUndefined(dom[lowerCaseProp]) && regex.test(prop)) {
+        return true
+    }
+
+    return false
+}
+
+function applyEvent(prop, fn, dom) {
+    const eventName = prop.replace(/^on/i, '').replace(/^[A-Z]/, match => match.toLowerCase());
+    dom.addEventListener(eventName, fn)
+}
+
+function applyProps(props, dom) {
+    for (const prop in props) {
+        if (isPropsEvent(prop, dom)) {
+            applyEvent(prop, props[prop], dom)
+            continue
+        }
+
+        if (!isUndefined(dom[prop])) {
+            dom[prop] = props[prop]
+        }
+    }
+}
 
 export function createNodes(comp, dom) {
     const nodes = []
@@ -32,6 +61,10 @@ export function createNodes(comp, dom) {
             ? document.createDocumentFragment()
             : document.createElement(symbol.description)
 
+        if (isObject(element.props)) {
+            applyProps(element.props, domElement)
+        }
+
         if (isFunction(element.children)) {
             createEffect((info) => {
                 const value = element.children()
@@ -46,18 +79,6 @@ export function createNodes(comp, dom) {
                     dom.replaceChild(domElement, dom.childNodes[idx])
                 }
             })
-        }
-
-        if (isFunction(element.onClick)) {
-            domElement.addEventListener('click', element.onClick)
-        }
-
-        if (isFunction(element.onChange)) {
-            domElement.addEventListener('input', element.onChange)
-        }
-
-        if (isString(element.className)) {
-            domElement.className = element.className
         }
 
         if (isPrimitive(children)) {
@@ -76,7 +97,6 @@ export function createNodes(comp, dom) {
     }
 
     dom.append(...nodes)
-
     return dom
 }
 

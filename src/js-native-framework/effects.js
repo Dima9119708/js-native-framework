@@ -24,20 +24,24 @@ const createSignal = (initial) => {
     }
 
     const setValue = (newValue) => {
+        const prevValue = context.value
         context.value = newValue
 
         context.observers?.forEach(observer => {
-            observer({ type: 'change' })
+            observer.fn({ type: 'change' })
         })
 
-        $signalSubscriber.setState(newValue)
+//        $signalSubscriber.setState(newValue)
     }
 
     return [readSignal.bind(context), setValue]
 }
 
-const createEffect = (fn) => {
-    Listener = fn
+const createEffect = (fn, value = undefined) => {
+    Listener = {
+        fn,
+        value
+    }
 
     fn({ type: 'mount' })
 
